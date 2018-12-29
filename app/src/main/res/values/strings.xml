@@ -76,4 +76,5 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="error">Could not delete the file!</string>
     <string name="saved_message">Image successfully saved!</string>
+    <string name="permission_denied">You need to grant permission for storage before using the app!</string>
 </resources>

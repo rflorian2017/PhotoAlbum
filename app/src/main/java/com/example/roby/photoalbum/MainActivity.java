@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -17,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.roby.photoalbum.utils.BitmapUtils;
 
@@ -51,11 +53,52 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
                 launchCamera();
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // If the image capture activity was called and was successful
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            // Process the image and set it to the TextView
+            processAndSetImage();
+        } else {
+
+            // Otherwise, delete the temporary image file
+            BitmapUtils.deleteImageFile(this, mTempPhotoPath);
+        }
+    }
+
+    /**
+     * Method for processing the captured image
+     */
+    private void processAndSetImage() {
+
+        // Toggle Visibility of the views
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        // Called when you request permission to read and write to external storage
+        switch (requestCode) {
+            case REQUEST_STORAGE_PERMISSION: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // If you get permission, launch the camera
+                    launchCamera();
+                } else {
+                    // If you do not get permission, show a Toast
+                    Toast.makeText(this, R.string.permission_denied, Snackbar.LENGTH_LONG).show();
+                }
+                break;
+            }
+        }
     }
 
     /**
