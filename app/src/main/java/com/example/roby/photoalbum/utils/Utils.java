@@ -5,7 +5,7 @@ import android.util.DisplayMetrics;
 
 public class Utils {
 
-    public static final int RECIPE_CARD_WIDTH = 1000; //recipe card has 1080dp width
+    public static final int PHOTO_CARD_WIDTH = 1000; //recipe card has 1080dp width
     public static final String CHECK_INTERNET_CONNECTION = "Please check the internet connection";
     public static final String PREFERENCE_RECIPE_ID = "RECIPE_NAME";
     public static final String APP_WIDGET = "APP_WIDGET";

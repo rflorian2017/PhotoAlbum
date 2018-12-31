@@ -1,6 +1,7 @@
 package com.example.roby.photoalbum;
 
 import android.Manifest;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -20,6 +21,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.roby.photoalbum.fragments.PhotoAlbumMasterListFragment;
+import com.example.roby.photoalbum.model.AlbumEntryViewModel;
 import com.example.roby.photoalbum.utils.BitmapUtils;
 
 import java.io.File;
@@ -28,11 +31,13 @@ import java.io.IOException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterListFragment.OnImageClickListener {
 
-    @BindView
-            (R.id.rv_photos)
+    @BindView(R.id.rv_photos)
     RecyclerView mRecyclerView;
+
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_STORAGE_PERMISSION = 1;
@@ -49,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -58,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
                 launchCamera();
             }
         });
+
+
     }
 
     @Override
@@ -171,5 +178,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onImageSelected(int position) {
+
     }
 }
