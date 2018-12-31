@@ -19,7 +19,7 @@ public class Utils {
         DisplayMetrics dm = activity.getResources().getDisplayMetrics();
         float dpWidth = dm.density * dm.widthPixels;
 
-        int columnNumber = dm.widthPixels / width;
+        int columnNumber = (int)dpWidth / width;
 
         // we want to have at least one column
         return columnNumber < 1 ? 1: columnNumber;

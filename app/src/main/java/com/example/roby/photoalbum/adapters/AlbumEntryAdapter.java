@@ -67,6 +67,8 @@ public class AlbumEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         recipeViewHolder.getmAlbumEntryIv().setScaleType(ImageView.ScaleType.FIT_CENTER);
         Picasso.get()
                 .load(new File(items.get(position)))
+                .resize(600, 600)
+                .centerCrop()
                 .into(recipeViewHolder.getmAlbumEntryIv());
 //        recipeViewModel.getmRecipeName().setText(items.get(position).getRecipeName());
 //        recipeViewModel.getmNumberOfRecipeSteps().setText(NUMBER_OF_STEPS_TEXT + items.get(position).getmRecipeSteps().size());
