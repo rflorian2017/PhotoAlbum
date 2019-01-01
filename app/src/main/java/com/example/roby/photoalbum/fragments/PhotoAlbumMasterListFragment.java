@@ -21,7 +21,7 @@ import com.example.roby.photoalbum.utils.Utils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class PhotoAlbumMasterListFragment extends Fragment {
+public class PhotoAlbumMasterListFragment extends Fragment implements AlbumEntryAdapter.AlbumEntryAdapterOnClickHandler {
     // Define a new interface OnImageClickListener that triggers a callback in the host activity
     OnImageClickListener mCallback;
 
@@ -32,7 +32,12 @@ public class PhotoAlbumMasterListFragment extends Fragment {
 
     // OnImageClickListener interface, calls a method in the host activity named onImageSelected
     public interface OnImageClickListener {
-        void onImageSelected(int position);
+        void onImageSelected(String imagePath);
+    }
+
+    @Override
+    public void onClick(String imagePath) {
+        mCallback.onImageSelected(imagePath);
     }
 
     // Override onAttach to make sure that the container activity has implemented the callback
@@ -68,7 +73,7 @@ public class PhotoAlbumMasterListFragment extends Fragment {
 
         mRecyclerView.setHasFixedSize(true);
 
-        albumEntryAdapter = new AlbumEntryAdapter(null);
+        albumEntryAdapter = new AlbumEntryAdapter(this);
 
 
         AlbumEntryViewModel albumViewModel = ViewModelProviders.of(this).get(AlbumEntryViewModel.class);

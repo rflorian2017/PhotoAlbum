@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 
 import com.example.roby.photoalbum.fragments.PhotoAlbumMasterListFragment;
 import com.example.roby.photoalbum.model.AlbumEntryViewModel;
+import com.example.roby.photoalbum.ui.PhotoEditActivity;
 import com.example.roby.photoalbum.utils.BitmapUtils;
 
 import java.io.File;
@@ -38,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
 
     @BindView(R.id.fab)
     FloatingActionButton fab;
+
+    private boolean mTwoPane;
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_STORAGE_PERMISSION = 1;
@@ -84,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
      * Method for processing the captured image
      */
     private void processAndSetImage() {
+
+        Intent intent = new Intent(this, PhotoEditActivity.class);
 
         // Toggle Visibility of the views
 
@@ -181,7 +187,27 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
     }
 
     @Override
-    public void onImageSelected(int position) {
+    public void onImageSelected(String position) {
+        Bundle bundle = new Bundle();
+        //bundle.putParcelable(RECIPE_STEP_PARCEL, selectedStep);
+        //bundle.putParcelable(RECIPE_PARCEL, passedRecipe);
+        if (mTwoPane) {
+
+//            bundle.putBoolean(TWO_PANE_BUNDLE, mTwoPane);
+//
+//            FragmentManager fm = getSupportFragmentManager();
+//            RecipeStepFragment recipeStepFragment = new RecipeStepFragment();
+//            recipeStepFragment.setArguments(bundle);
+//
+//            fm.beginTransaction()
+//                    .replace(R.id.step_container, recipeStepFragment)
+//                    .commit();
+        } else {
+            Intent intent = new Intent(this, PhotoEditActivity.class);
+
+            startActivity(intent);
+        }
+
 
     }
 }
