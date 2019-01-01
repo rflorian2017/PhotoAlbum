@@ -1,11 +1,17 @@
 package com.example.roby.photoalbum.utils;
 
 import android.app.Activity;
+import android.media.ExifInterface;
 import android.util.DisplayMetrics;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Utils {
 
     public static final int PHOTO_CARD_WIDTH = 1000; //recipe card has 1080dp width
+    public static final String TAG_DATETIME = "datetime";
     public static final String CHECK_INTERNET_CONNECTION = "Please check the internet connection";
     public static final String PREFERENCE_RECIPE_ID = "RECIPE_NAME";
     public static final String APP_WIDGET = "APP_WIDGET";
@@ -23,5 +29,20 @@ public class Utils {
 
         // we want to have at least one column
         return columnNumber < 1 ? 1: columnNumber;
+    }
+
+    public static Map<String,String> ReadExif(String file){
+        Map<String, String> imageData = new HashMap<>() ;
+        try {
+            ExifInterface exifInterface = new ExifInterface(file);
+
+            imageData.put(TAG_DATETIME, exifInterface.getAttribute(ExifInterface.TAG_DATETIME));
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return imageData;
     }
 }

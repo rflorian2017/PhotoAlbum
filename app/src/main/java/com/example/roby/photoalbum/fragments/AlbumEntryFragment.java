@@ -34,9 +34,9 @@ public class AlbumEntryFragment extends Fragment {
 //            currentStep = bundle.getParcelable(RecipeDetailActivity.RECIPE_STEP_PARCEL);
 //            mTwoPane = bundle.getBoolean(RecipeDetailActivity.TWO_PANE_BUNDLE);
         }
-        View view = inflater.inflate(R.layout.fragment_photo_edit, container, false);
+        View view = inflater.inflate(R.layout.fragment_photo_view, container, false);
 
         ButterKnife.bind(this, view);
-        return super.onCreateView(inflater, container, savedInstanceState);
+        return view;
     }
 }

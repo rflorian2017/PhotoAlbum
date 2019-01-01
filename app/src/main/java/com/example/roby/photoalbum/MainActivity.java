@@ -1,7 +1,6 @@
 package com.example.roby.photoalbum;
 
 import android.Manifest;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -11,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -23,9 +21,10 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.roby.photoalbum.fragments.PhotoAlbumMasterListFragment;
-import com.example.roby.photoalbum.model.AlbumEntryViewModel;
 import com.example.roby.photoalbum.ui.PhotoEditActivity;
+import com.example.roby.photoalbum.ui.PhotoViewActivity;
 import com.example.roby.photoalbum.utils.BitmapUtils;
+import com.example.roby.photoalbum.utils.Constants;
 
 import java.io.File;
 import java.io.IOException;
@@ -90,9 +89,12 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
     private void processAndSetImage() {
 
         Intent intent = new Intent(this, PhotoEditActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.EXTRA_TEMP_PHOTO_PATH, mTempPhotoPath);
+        intent.putExtra(Constants.PHOTO_FRAGMENT_EDIT_BUNDLE, bundle);
 
         // Toggle Visibility of the views
-
+        startActivity(intent);
     }
 
     @Override
@@ -203,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
 //                    .replace(R.id.step_container, recipeStepFragment)
 //                    .commit();
         } else {
-            Intent intent = new Intent(this, PhotoEditActivity.class);
+            Intent intent = new Intent(this, PhotoViewActivity.class);
 
             startActivity(intent);
         }

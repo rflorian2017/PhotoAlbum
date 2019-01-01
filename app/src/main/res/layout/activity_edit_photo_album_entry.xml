@@ -4,7 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.PhotoViewActivity"
-    android:id="@+id/photo_entry_container">
+    tools:context=".ui.PhotoEditActivity"
+    android:id="@+id/photo_edit_entry_container">
 
 </android.support.constraint.ConstraintLayout>
