@@ -79,4 +79,6 @@
     <string name="permission_denied">You need to grant permission for storage before using the app!</string>
     <string name="album_photo_content_description">Album photo</string>
     <string name="btn_save_text">Save</string>
+    <string name="btn_edit_text">Edit</string>
+    <string name="photo_description_view">Photo description</string>
 </resources>

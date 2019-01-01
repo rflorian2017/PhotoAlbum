@@ -19,19 +19,24 @@ public class AlbumEntry {
     @ColumnInfo(name="nearby_place")
     public String nearbyPlace;
     public String location;
+    public String date;
+    public String description;
 
-    public AlbumEntry(String pictureName, String imagePath, String nearbyPlace, String location) {
+    public AlbumEntry(String pictureName, String imagePath, String nearbyPlace, String location, String date, String description) {
         this.pictureName = pictureName;
         this.imagePath = imagePath;
         this.nearbyPlace = nearbyPlace;
         this.location = location;
+        this.date = date;
+        this.description = description;
     }
 
+    @NonNull
     public String getPictureName() {
         return pictureName;
     }
 
-    public void setPictureName(String pictureName) {
+    public void setPictureName(@NonNull String pictureName) {
         this.pictureName = pictureName;
     }
 
@@ -57,5 +62,21 @@ public class AlbumEntry {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

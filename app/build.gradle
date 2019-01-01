@@ -52,5 +52,10 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
+    //places and location api
+    def gms_version = "16.0.0"
+    implementation "com.google.android.gms:play-services-places:$gms_version"
+    implementation "com.google.android.gms:play-services-location:$gms_version"
+
 
 }

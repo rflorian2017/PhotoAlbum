@@ -191,22 +191,14 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
     @Override
     public void onImageSelected(String position) {
         Bundle bundle = new Bundle();
-        //bundle.putParcelable(RECIPE_STEP_PARCEL, selectedStep);
-        //bundle.putParcelable(RECIPE_PARCEL, passedRecipe);
+        bundle.putString(Constants.EXTRA_TEMP_PHOTO_PATH, position);
         if (mTwoPane) {
 
-//            bundle.putBoolean(TWO_PANE_BUNDLE, mTwoPane);
-//
-//            FragmentManager fm = getSupportFragmentManager();
-//            RecipeStepFragment recipeStepFragment = new RecipeStepFragment();
-//            recipeStepFragment.setArguments(bundle);
-//
-//            fm.beginTransaction()
-//                    .replace(R.id.step_container, recipeStepFragment)
-//                    .commit();
+//            TODO: Create for two pane in the future
         } else {
             Intent intent = new Intent(this, PhotoViewActivity.class);
 
+            intent.putExtra(Constants.PHOTO_FRAGMENT_VIEW_BUNDLE, bundle);
             startActivity(intent);
         }
 

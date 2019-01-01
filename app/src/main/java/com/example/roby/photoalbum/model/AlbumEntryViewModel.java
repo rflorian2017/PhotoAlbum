@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModel;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+
+import com.example.roby.photoalbum.database.AppDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +21,17 @@ public class AlbumEntryViewModel extends AndroidViewModel {
     private ImagesLiveData imageData;
     // Simple in-memory cache. Details omitted for brevity.
 
+    private LiveData<List<AlbumEntry>> albumEntries;
+
+    public LiveData<List<AlbumEntry>> getAlbumEntries() {
+        return albumEntries;
+    }
+
     public AlbumEntryViewModel(@NonNull Application application) {
         super(application);
+        AppDatabase database = AppDatabase.getInstance(this.getApplication());
         imageData = new ImagesLiveData(application);
+        albumEntries = database.albumEntryDAO().loadAllEntries();
     }
 
     public LiveData<List<String>> getImageData() {
@@ -28,13 +39,13 @@ public class AlbumEntryViewModel extends AndroidViewModel {
     }
 }
 
+
+
 class ImagesLiveData extends LiveData<List<String>> {
     private final Context context;
 
     /**
      * Getting All Images Path.
-     *
-     * @param activity
      *            the activity
      * @return ArrayList with images Path
      */

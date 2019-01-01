@@ -19,9 +19,9 @@ public interface AlbumEntryDAO {
     List<AlbumEntry> loadAlbumEntryList();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAlbumEntry(List<AlbumEntry> recipes);
+    long insertAlbumEntry(AlbumEntry albumEntry);
 
     @Query("SELECT * FROM album_entries WHERE picture_name = :picture_name")
-    AlbumEntry loadAlbumEntry(String picture_name);
+    LiveData<AlbumEntry> loadAlbumEntry(String picture_name);
 
 }

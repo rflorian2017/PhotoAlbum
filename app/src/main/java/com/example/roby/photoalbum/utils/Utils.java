@@ -39,7 +39,6 @@ public class Utils {
             imageData.put(TAG_DATETIME, exifInterface.getAttribute(ExifInterface.TAG_DATETIME));
 
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
