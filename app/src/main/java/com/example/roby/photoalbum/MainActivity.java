@@ -2,6 +2,7 @@ package com.example.roby.photoalbum;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -32,7 +34,8 @@ import java.io.IOException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterListFragment.OnImageClickListener {
+public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterListFragment.OnImageClickListener,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     @BindView(R.id.rv_photos)
     RecyclerView mRecyclerView;
@@ -45,8 +48,11 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_STORAGE_PERMISSION = 1;
     private String mTempPhotoPath;
+    public static String displayCriteria;
 
     private static final String FILE_PROVIDER_AUTHORITY = "com.example.android.fileprovider";
+
+    private static boolean PREFERENCES_HAVE_BEEN_UPDATED = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,16 +64,25 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
         setSupportActionBar(toolbar);
 
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        fab.setOnClickListener(view -> {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
-                launchCamera();
-            }
+            launchCamera();
         });
 
+        //preferences are used to switch the DISPLAY criteria
+        setupSharedPreferences();
+    }
 
+    //this is used to change the pref of the sorting criteria
+    private void setupSharedPreferences() {
+        //by default I am showing photos from internal storage
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+//        mMovieAdapter.setSortingCriteria(sharedPrefs.getString(getString(R.string.pref_display_crit),
+//                getString(R.string.pref_sort_crit_top_rated_key)));
+        displayCriteria = sharedPrefs.getString(getString(R.string.pref_display_crit), getString(R.string.pref_display_crit_int_storage_key));
+
+        sharedPrefs.registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -123,11 +138,14 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
         // Check for the external storage permission
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
+                != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
 
             // If you do not have permission, request it
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_STORAGE_PERMISSION);
         } else {
             // Launch the camera if the permission exists
@@ -180,8 +198,9 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent startSettingsActivity = new Intent(this, Settings.class);
+            startActivity(startSettingsActivity);
             return true;
         }
 
@@ -189,9 +208,28 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //unregister the shared pref listener
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (PREFERENCES_HAVE_BEEN_UPDATED) {
+//            invalidateData();
+//            getSupportLoaderManager().restartLoader(MOVIE_QUERIES_LOADER_ID, null, this);
+
+            PREFERENCES_HAVE_BEEN_UPDATED = false;
+        }
+    }
+
+    @Override
     public void onImageSelected(String position) {
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.EXTRA_TEMP_PHOTO_PATH, position);
+        bundle.putString(Constants.EXTRA_PHOTO_PATH, position);
         if (mTwoPane) {
 
 //            TODO: Create for two pane in the future
@@ -203,5 +241,15 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
         }
 
 
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals((getString(R.string.pref_display_crit)))) {
+//            mMovieAdapter.setSortingCriteria(sharedPreferences.getString(getString(R.string.pref_sort_crit),
+//                    getString(R.string.pref_sort_crit_top_rated_key)));
+            displayCriteria = sharedPreferences.getString(getString(R.string.pref_display_crit), getString(R.string.pref_display_crit_int_storage_key));
+            PREFERENCES_HAVE_BEEN_UPDATED = true;
+        }
     }
 }

@@ -18,9 +18,7 @@ import com.example.roby.photoalbum.R;
 import com.example.roby.photoalbum.database.AppDatabase;
 import com.example.roby.photoalbum.model.AddAlbumEntryViewModel;
 import com.example.roby.photoalbum.model.AlbumEntry;
-import com.example.roby.photoalbum.model.AlbumEntryViewModel;
 import com.example.roby.photoalbum.model.AlbumEntryViewModelFactory;
-import com.example.roby.photoalbum.utils.AppExecutors;
 import com.example.roby.photoalbum.utils.Constants;
 import com.squareup.picasso.Picasso;
 
@@ -79,7 +77,7 @@ public class AlbumEntryFragment extends Fragment {
         // get transferred information from bundle
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            mTmpImagePath = bundle.getString(Constants.EXTRA_TEMP_PHOTO_PATH);
+            mTmpImagePath = bundle.getString(Constants.EXTRA_PHOTO_PATH);
         }
         View view = inflater.inflate(R.layout.fragment_photo_view, container, false);
 

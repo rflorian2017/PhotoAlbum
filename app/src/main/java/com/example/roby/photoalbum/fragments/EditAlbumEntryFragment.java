@@ -30,6 +30,7 @@ import butterknife.ButterKnife;
 public class EditAlbumEntryFragment extends Fragment {
     private Bitmap mResultsBitmap;
     private String mTmpImagePath;
+    private String mFinalImagePath;
 
     OnSaveClickListener mOnSaveClickListener;
 
@@ -52,7 +53,7 @@ public class EditAlbumEntryFragment extends Fragment {
     private AppDatabase mDb;
 
     public interface OnSaveClickListener {
-        void clickSaveBtn(String image);
+        String clickSaveBtn(String image, Bitmap mResultsBitmap);
     }
 
     public EditAlbumEntryFragment() {
@@ -66,8 +67,7 @@ public class EditAlbumEntryFragment extends Fragment {
         //make sure that the host has implemented the callback
         try {
             mOnSaveClickListener = (EditAlbumEntryFragment.OnSaveClickListener) context;
-        }
-        catch (ClassCastException e) {
+        } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement OnSaveClickListener");
         }
     }
@@ -78,6 +78,7 @@ public class EditAlbumEntryFragment extends Fragment {
         // get transferred information from bundle
         Bundle bundle = this.getArguments();
         if (bundle != null) {
+            mFinalImagePath = bundle.getString(Constants.EXTRA_PHOTO_PATH);
             mTmpImagePath = bundle.getString(Constants.EXTRA_TEMP_PHOTO_PATH);
         }
         View view = inflater.inflate(R.layout.fragment_photo_edit, container, false);
@@ -87,22 +88,20 @@ public class EditAlbumEntryFragment extends Fragment {
         mDb = AppDatabase.getInstance(getContext());
 
         // Resample the saved image to fit the ImageView
-        mResultsBitmap = BitmapUtils.resamplePic(this.getContext(), mTmpImagePath);
+        mResultsBitmap = BitmapUtils.resamplePic(this.getContext(), mFinalImagePath == null ? mTmpImagePath : mFinalImagePath);
 
-        mBtnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onSaveButtonClicked();
-                mOnSaveClickListener.clickSaveBtn(mTmpImagePath);
-            }
+        final String[] newPath = {""};
+        mBtnSave.setOnClickListener(v -> {
+            newPath[0] = mOnSaveClickListener.clickSaveBtn(mFinalImagePath == null ? mTmpImagePath : mFinalImagePath, mResultsBitmap);
+            onSaveButtonClicked(newPath[0]);
         });
 
         // Set the new bitmap to the ImageView
         mPhotoEditIv.setImageBitmap(mResultsBitmap);
 
-        mPhotoEditDateTime.setText(Utils.ReadExif(mTmpImagePath).get(Utils.TAG_DATETIME));
+        mPhotoEditDateTime.setText(Utils.ReadExif(mFinalImagePath == null ? mTmpImagePath : mFinalImagePath).get(Utils.TAG_DATETIME));
 
-        mPhotoName.setText(new File(mTmpImagePath).getName());
+        mPhotoName.setText(new File(mFinalImagePath == null ? mTmpImagePath : mFinalImagePath).getName());
 
         return view;
     }
@@ -111,22 +110,16 @@ public class EditAlbumEntryFragment extends Fragment {
      * onSaveButtonClicked is called when the "save" button is clicked.
      * It retrieves user input and inserts that new task data into the underlying database.
      */
-    public void onSaveButtonClicked() {
+    public void onSaveButtonClicked(String newPath) {
         //AlbumEntry(String pictureName, String imagePath, String nearbyPlace, String location, String date)
 
-        final AlbumEntry albumEntry = new AlbumEntry(mPhotoName.getText().toString(),
-                mTmpImagePath,
+        final AlbumEntry albumEntry = new AlbumEntry(new File(newPath).getName(),
+                mFinalImagePath == null ? newPath: mFinalImagePath,
                 "",
                 "",
                 mPhotoEditDateTime.getText().toString(),
                 meditTextDescr.getText().toString());
         final long[] new_row = new long[1];
-        AppExecutors.getInstance().getDiskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                    new_row[0] = mDb.albumEntryDAO().insertAlbumEntry(albumEntry);
-
-            }
-        });
+        AppExecutors.getInstance().getDiskIO().execute(() -> new_row[0] = mDb.albumEntryDAO().insertAlbumEntry(albumEntry));
     }
 }

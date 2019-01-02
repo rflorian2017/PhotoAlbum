@@ -1,7 +1,6 @@
 package com.example.roby.photoalbum.adapters;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.roby.photoalbum.R;
-import com.example.roby.photoalbum.model.AlbumEntry;
 import com.example.roby.photoalbum.ui.AlbumEntryViewHolder;
 import com.squareup.picasso.Picasso;
 

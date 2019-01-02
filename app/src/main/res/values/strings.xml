@@ -8,24 +8,23 @@
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
 
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
-        based on your message history
+    <string name="pref_enable_location">Enable FINE location</string>
+    <string name="pref_location_enable">Allow app to access fine location (GPS, WiFi)
     </string>
 
     <string name="pref_title_display_name">Display name</string>
     <string name="pref_default_display_name">John Smith</string>
 
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
-    <string-array name="pref_example_list_titles">
-        <item>Always</item>
-        <item>When possible</item>
-        <item>Never</item>
+    <string name="pref_display_location">Photo display location</string>
+    <string-array name="pref_display_criteria">
+        <item>@string/pref_display_crit_int_storage_label</item>
+        <item>@string/pref_display_crit_app_album_storage_label</item>
+        <item>@string/pref_display_crit_google_photos_storage_label</item>
     </string-array>
-    <string-array name="pref_example_list_values">
-        <item>1</item>
-        <item>0</item>
-        <item>-1</item>
+    <string-array name="pref_display_criteria_values">
+        <item>@string/pref_display_crit_int_storage_key</item>
+        <item>@string/pref_display_crit_app_album_storage_key</item>
+        <item>@string/pref_display_crit_google_photos_storage_key</item>
     </string-array>
 
     <!-- Example settings for Data & Sync -->
@@ -81,4 +80,12 @@
     <string name="btn_save_text">Save</string>
     <string name="btn_edit_text">Edit</string>
     <string name="photo_description_view">Photo description</string>
+    <string name="location_switch">location_switch</string>
+    <string name="pref_display_crit_int_storage_label">From phone storage</string>
+    <string name="pref_display_crit_app_album_storage_label">From app album</string>
+    <string name="pref_display_crit_google_photos_storage_label">From your Google photos</string>
+    <string name="pref_display_crit_int_storage_key">internal</string>
+    <string name="pref_display_crit_app_album_storage_key">album</string>
+    <string name="pref_display_crit_google_photos_storage_key">gphotos</string>
+    <string name="pref_display_crit" translatable="false">display_crit</string>
 </resources>

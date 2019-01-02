@@ -3,6 +3,8 @@
     package="com.example.roby.photoalbum">
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
@@ -50,7 +52,7 @@
                 android:value="com.example.roby.photoalbum.MainActivity" />
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name=".Settings"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MainActivity">
             <meta-data
