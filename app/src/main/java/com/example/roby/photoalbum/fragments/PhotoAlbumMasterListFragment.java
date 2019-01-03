@@ -41,8 +41,6 @@ public class PhotoAlbumMasterListFragment extends Fragment implements AlbumEntry
 
     private AlbumEntryAdapter albumEntryAdapter;
 
-    private AppDatabase mDb;
-
     // OnImageClickListener interface, calls a method in the host activity named onImageSelected
     public interface OnImageClickListener {
         void onImageSelected(String imagePath);
@@ -105,8 +103,6 @@ public class PhotoAlbumMasterListFragment extends Fragment implements AlbumEntry
         }
 
         if(displayCriteria.equals(getString(R.string.pref_display_crit_app_album_storage_key))) {
-
-            mDb = AppDatabase.getInstance(getContext());
 
             AlbumEntryViewModel viewModel = ViewModelProviders.of(this).get(AlbumEntryViewModel.class);
 

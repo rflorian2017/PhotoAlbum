@@ -88,4 +88,8 @@
     <string name="pref_display_crit_app_album_storage_key">album</string>
     <string name="pref_display_crit_google_photos_storage_key">gphotos</string>
     <string name="pref_display_crit" translatable="false">display_crit</string>
+    <string name="btn_add_place_text">Add place</string>
+    <string name="appwidget_text">Favorite photo</string>
+    <string name="add_widget">Add widget</string>
+    <string name="activity_widget_config">Widget configuration</string>
 </resources>

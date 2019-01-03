@@ -1,11 +1,15 @@
 package com.example.roby.photoalbum.fragments;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.roby.photoalbum.R;
 import com.example.roby.photoalbum.database.AppDatabase;
@@ -21,14 +26,21 @@ import com.example.roby.photoalbum.utils.AppExecutors;
 import com.example.roby.photoalbum.utils.BitmapUtils;
 import com.example.roby.photoalbum.utils.Constants;
 import com.example.roby.photoalbum.utils.Utils;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.ui.PlacePicker;
 
 import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.support.constraint.Constraints.TAG;
+
 public class EditAlbumEntryFragment extends Fragment {
+    private static final int PLACE_PICKER_REQUEST = 1;
     private Bitmap mResultsBitmap;
+
     private String mTmpImagePath;
     private String mFinalImagePath;
 
@@ -48,6 +60,12 @@ public class EditAlbumEntryFragment extends Fragment {
 
     @BindView(R.id.photo_description_et)
     EditText meditTextDescr;
+
+    @BindView(R.id.photo_edit_place_tv)
+    TextView mPhotoPlace;
+
+    @BindView(R.id.btn_add_place)
+    Button mBtnAddPlace;
 
     // Member variable for the Database
     private AppDatabase mDb;
@@ -96,6 +114,10 @@ public class EditAlbumEntryFragment extends Fragment {
             onSaveButtonClicked(newPath[0]);
         });
 
+        mBtnAddPlace.setOnClickListener(v-> {
+            onAddPlaceButtonClicked();
+        });
+
         // Set the new bitmap to the ImageView
         mPhotoEditIv.setImageBitmap(mResultsBitmap);
 
@@ -104,6 +126,27 @@ public class EditAlbumEntryFragment extends Fragment {
         mPhotoName.setText(new File(mFinalImagePath == null ? mTmpImagePath : mFinalImagePath).getName());
 
         return view;
+    }
+
+    public void onAddPlaceButtonClicked() {
+        if (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this.getContext(), "Error permission not granted", Toast.LENGTH_LONG).show();
+            return;
+        }
+        try {
+            // Start a new Activity for the Place Picker API, this will trigger {@code #onActivityResult}
+            // when a place is selected or with the user cancels.
+            PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+            Intent i = builder.build(this.getActivity());
+            startActivityForResult(i, PLACE_PICKER_REQUEST);
+        } catch (GooglePlayServicesRepairableException e) {
+            Log.e(TAG, String.format("GooglePlayServices Not Available [%s]", e.getMessage()));
+        } catch (GooglePlayServicesNotAvailableException e) {
+            Log.e(TAG, String.format("GooglePlayServices Not Available [%s]", e.getMessage()));
+        } catch (Exception e) {
+            Log.e(TAG, String.format("PlacePicker Exception: %s", e.getMessage()));
+        }
     }
 
     /**

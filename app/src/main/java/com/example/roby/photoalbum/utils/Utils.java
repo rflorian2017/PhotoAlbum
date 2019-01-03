@@ -13,11 +13,13 @@ public class Utils {
     public static final int PHOTO_CARD_WIDTH = 1000; //recipe card has 1080dp width
     public static final String TAG_DATETIME = "datetime";
     public static final String CHECK_INTERNET_CONNECTION = "Please check the internet connection";
-    public static final String PREFERENCE_RECIPE_ID = "RECIPE_NAME";
+    public static final String PREFERENCE_PHOTO_ALBUM_NAME = "PHOTO_NAME";
     public static final String APP_WIDGET = "APP_WIDGET";
-    public static final String APP_WIDGET_RECIPE_NAME_PREFERENCE = "APP_WIDGET_RECIPE_NAME";
+    public static final String APP_WIDGET_PHOTO_NAME_PREFERENCE = "APP_WIDGET_PHOTO_NAME_PREFERENCE";
     public static final String APP_WIDGET_ID = "APP_WIDGET_ID";
     public static final String APP_WIDGET_RECIPE_INGREDIENTS = "APP_WIDGET_ID";
+    public static final String CHECK_DATABASE_CONNECTION = "Database access error";
+    public static final String PREFERENCE_PHOTO_DESCR = "Photo_decription";
 
     //compute number of columns based on screen size
     // https://stackoverflow.com/questions/1016896/get-screen-dimensions-in-pixels

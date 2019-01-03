@@ -52,5 +52,19 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/photo_description_et"
         android:text="@string/btn_save_text"/>
+    <Button
+        android:id="@+id/btn_add_place"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/btn_save"
+        android:text="@string/btn_add_place_text"/>
+    <TextView
+        android:id="@+id/photo_edit_place_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/album_entry_padding"
+        android:textSize="@dimen/text_size_photo_date"
+        app:layout_constraintTop_toBottomOf="@id/btn_add_place"/>
+
 
 </android.support.constraint.ConstraintLayout>

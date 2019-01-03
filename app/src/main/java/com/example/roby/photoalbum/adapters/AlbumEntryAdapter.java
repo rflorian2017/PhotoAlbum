@@ -13,12 +13,14 @@ import com.example.roby.photoalbum.ui.AlbumEntryViewHolder;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 
 public class AlbumEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // Store a member variable for the Album Entries
     private List<String> items;
+    private HashMap<String,String> descriptionsPhotos;
 
     // Store the context for easy access
     private Context mContext;
@@ -68,8 +70,6 @@ public class AlbumEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 .resize(600, 600)
                 .centerCrop()
                 .into(recipeViewHolder.getmAlbumEntryIv());
-//        recipeViewModel.getmRecipeName().setText(items.get(position).getRecipeName());
-//        recipeViewModel.getmNumberOfRecipeSteps().setText(NUMBER_OF_STEPS_TEXT + items.get(position).getmRecipeSteps().size());
     }
 
     @Override
@@ -84,5 +84,13 @@ public class AlbumEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void setAlbumData(List<String> items) {
         this.items = items;
         notifyDataSetChanged();
+    }
+
+    public void setDescriptions(HashMap<String,String> descriptionsPhotos){
+        this.descriptionsPhotos = descriptionsPhotos;
+    }
+
+    public HashMap<String, String> getDescriptionsPhotos() {
+        return descriptionsPhotos;
     }
 }
