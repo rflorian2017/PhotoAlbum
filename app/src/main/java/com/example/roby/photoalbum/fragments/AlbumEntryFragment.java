@@ -51,6 +51,12 @@ public class AlbumEntryFragment extends Fragment {
     @BindView(R.id.photo_description_tv)
     TextView mPhotoDescrTv;
 
+    @BindView(R.id.photo_view_place_tv)
+    TextView mPhotoPlaceTv;
+
+    @BindView(R.id.photo_view_location_tv)
+    TextView mPhotoLocationTv;
+
     public AlbumEntryFragment() {
 
     }
@@ -121,5 +127,7 @@ public class AlbumEntryFragment extends Fragment {
             return;
         }
         mPhotoDescrTv.setText(albumEntry.getDescription());
+        mPhotoPlaceTv.setText(albumEntry.getNearbyPlace());
+        mPhotoLocationTv.setText(albumEntry.getLocation());
     }
 }

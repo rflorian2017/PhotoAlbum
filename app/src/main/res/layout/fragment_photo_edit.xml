@@ -65,6 +65,13 @@
         android:padding="@dimen/album_entry_padding"
         android:textSize="@dimen/text_size_photo_date"
         app:layout_constraintTop_toBottomOf="@id/btn_add_place"/>
+    <TextView
+        android:id="@+id/photo_edit_location_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/album_entry_padding"
+        android:textSize="@dimen/text_size_photo_date"
+        app:layout_constraintTop_toBottomOf="@id/photo_edit_place_tv"/>
 
 
 </android.support.constraint.ConstraintLayout>

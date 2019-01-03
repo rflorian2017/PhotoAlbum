@@ -1,5 +1,7 @@
 package com.example.roby.photoalbum.fragments;
 
+import android.Manifest;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -28,6 +30,7 @@ import com.example.roby.photoalbum.utils.Constants;
 import com.example.roby.photoalbum.utils.Utils;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
 import java.io.File;
@@ -35,10 +38,12 @@ import java.io.File;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.app.Activity.RESULT_OK;
 import static android.support.constraint.Constraints.TAG;
 
 public class EditAlbumEntryFragment extends Fragment {
     private static final int PLACE_PICKER_REQUEST = 1;
+    private static final int REQUEST_SLOCATION_PERMISSION = 2;
     private Bitmap mResultsBitmap;
 
     private String mTmpImagePath;
@@ -63,6 +68,9 @@ public class EditAlbumEntryFragment extends Fragment {
 
     @BindView(R.id.photo_edit_place_tv)
     TextView mPhotoPlace;
+
+    @BindView(R.id.photo_edit_location_tv)
+    TextView mPhotoLocation;
 
     @BindView(R.id.btn_add_place)
     Button mBtnAddPlace;
@@ -129,8 +137,13 @@ public class EditAlbumEntryFragment extends Fragment {
     }
 
     public void onAddPlaceButtonClicked() {
+
         if (ActivityCompat.checkSelfPermission(this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
+            // If you do not have permission, request it
+            ActivityCompat.requestPermissions(this.getActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_SLOCATION_PERMISSION);
             Toast.makeText(this.getContext(), "Error permission not granted", Toast.LENGTH_LONG).show();
             return;
         }
@@ -149,6 +162,24 @@ public class EditAlbumEntryFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_PICKER_REQUEST && resultCode == RESULT_OK) {
+            Place place = PlacePicker.getPlace(this.getContext(), data);
+            if (place == null) {
+                Log.i(TAG, "No place selected");
+                return;
+            }
+
+            // Extract the place information from the API
+            String placeName = place.getName().toString();
+            String placeAddress = place.getLatLng().toString();
+
+            mPhotoLocation.setText(placeAddress);
+            mPhotoPlace.setText(placeName);
+        }
+    }
+
     /**
      * onSaveButtonClicked is called when the "save" button is clicked.
      * It retrieves user input and inserts that new task data into the underlying database.
@@ -158,11 +189,10 @@ public class EditAlbumEntryFragment extends Fragment {
 
         final AlbumEntry albumEntry = new AlbumEntry(new File(newPath).getName(),
                 mFinalImagePath == null ? newPath: mFinalImagePath,
-                "",
-                "",
+                mPhotoPlace.getText().toString(),
+                mPhotoLocation.getText().toString(),
                 mPhotoEditDateTime.getText().toString(),
                 meditTextDescr.getText().toString());
-        final long[] new_row = new long[1];
-        AppExecutors.getInstance().getDiskIO().execute(() -> new_row[0] = mDb.albumEntryDAO().insertAlbumEntry(albumEntry));
+        AppExecutors.getInstance().getDiskIO().execute(() -> mDb.albumEntryDAO().insertAlbumEntry(albumEntry));
     }
 }

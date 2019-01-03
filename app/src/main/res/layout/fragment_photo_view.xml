@@ -44,11 +44,27 @@
         android:textStyle="italic"
         android:text="@string/photo_description_view"
         app:layout_constraintTop_toBottomOf="@id/album_photo_iv" />
+    <TextView
+        android:id="@+id/photo_view_place_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/album_entry_padding"
+        android:textStyle="italic"
+        android:text="@string/photo_empty_nearby_place_data_view"
+        app:layout_constraintTop_toBottomOf="@id/photo_description_tv"/>
+    <TextView
+        android:id="@+id/photo_view_location_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/album_entry_padding"
+        android:textStyle="italic"
+        android:text="@string/photo_empty_location_data_view"
+        app:layout_constraintTop_toBottomOf="@id/photo_view_place_tv"/>
     <Button
         android:id="@+id/btn_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/photo_description_tv"
+        app:layout_constraintTop_toBottomOf="@id/photo_view_location_tv"
         android:text="@string/btn_edit_text"/>
 
 </android.support.constraint.ConstraintLayout>

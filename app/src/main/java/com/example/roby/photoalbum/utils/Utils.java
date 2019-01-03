@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.media.ExifInterface;
 import android.util.DisplayMetrics;
 
+import com.google.android.gms.common.api.ApiException;
+import com.google.photos.library.v1.internal.InternalPhotosLibraryClient;
+import com.google.photos.library.v1.proto.MediaItem;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,5 +49,24 @@ public class Utils {
         }
 
         return imageData;
+    }
+
+    public void test( ) {
+//        try {
+//            // Make a request to list all media items in the user's library
+//            // Iterate over all the retrieved media items
+//            // Pagination is handled automatically
+//            InternalPhotosLibraryClient.ListMediaItemsPagedResponse response = photosLibraryClient.listMediaItems();
+//            for (MediaItem item : response.iterateAll()) {
+//                // Get some properties of a media item
+//                String id = item.getId();
+//                String description = item.getDescription();
+//                String mimeType = item.getMimeType();
+//                String productUrl = item.getProductUrl();
+//                String filename = item.getFilename();
+//            }
+//        } catch (ApiException e) {
+//            // Handle error
+//        }
     }
 }

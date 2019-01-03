@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_STORAGE_PERMISSION = 1;
-    private static final int REQUEST_SLOCATION_PERMISSION = 2;
     private String mTempPhotoPath;
     public static String displayCriteria;
 
@@ -137,18 +136,12 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
      */
     private void launchCamera() {
         // Check for the external storage permission
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
             // If you do not have permission, request it
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     REQUEST_STORAGE_PERMISSION);
-
-            // If you do not have permission, request it
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_SLOCATION_PERMISSION);
 
         } else {
             // Launch the camera if the permission exists

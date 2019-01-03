@@ -1,7 +1,9 @@
 package com.example.roby.photoalbum.ui;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
@@ -70,5 +72,10 @@ public class PhotoViewActivity extends AppCompatActivity implements AlbumEntryFr
                 .replace(R.id.photo_entry_container, albumEntryFragment)
                 .commit();
         return image;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
