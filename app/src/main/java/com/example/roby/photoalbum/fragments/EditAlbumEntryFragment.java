@@ -144,7 +144,7 @@ public class EditAlbumEntryFragment extends Fragment {
             ActivityCompat.requestPermissions(this.getActivity(),
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_SLOCATION_PERMISSION);
-            Toast.makeText(this.getContext(), "Error permission not granted", Toast.LENGTH_LONG).show();
+            Toast.makeText(this.getContext(), "Permission granted", Toast.LENGTH_LONG).show();
             return;
         }
         try {

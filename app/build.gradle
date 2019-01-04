@@ -69,6 +69,10 @@ dependencies {
     def gms_version = "16.0.0"
     implementation "com.google.android.gms:play-services-places:$gms_version"
     implementation "com.google.android.gms:play-services-location:$gms_version"
+
+    // Google Drive or Calendar
+    implementation "com.google.android.gms:play-services-auth:$gms_version"
+    implementation "com.google.android.gms:play-services-drive:$gms_version"
     //google photos
     implementation 'com.google.photos.library:google-photos-library-client:1.1.0'
 }

@@ -2,6 +2,7 @@ package com.example.roby.photoalbum;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -34,15 +35,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveClient;
-import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.DriveResourceClient;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.TaskCompletionSource;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -61,12 +60,15 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_STORAGE_PERMISSION = 2;
     private static final int REQUEST_CODE_SIGN_IN = 3;
+
     private String mTempPhotoPath;
     public static String displayCriteria;
 
     private static final String FILE_PROVIDER_AUTHORITY = "com.example.android.fileprovider";
 
     private static boolean PREFERENCES_HAVE_BEEN_UPDATED = false;
+
+    private static final String TAG = "MainActivityGDrive";
 
     /**
      * Handles high-level drive functions like sync
@@ -78,11 +80,6 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
      */
     private DriveResourceClient mDriveResourceClient;
 
-    /**
-     * Tracks completion of the drive picker
-     */
-    private TaskCompletionSource<DriveId> mOpenItemTaskSource;
-    private static final String TAG = "MainActivityGDrive";
 
 
     @Override
@@ -104,6 +101,13 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
         //preferences are used to switch the DISPLAY criteria
         setupSharedPreferences();
 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            // If you do not have permission, request it
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_STORAGE_PERMISSION);
+        }
 
     }
 
@@ -121,25 +125,7 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case REQUEST_CODE_SIGN_IN:
-                if (resultCode != RESULT_OK) {
-                    // Sign-in may fail or be cancelled by the user. For this sample, sign-in is
-                    // required and is fatal. For apps where sign-in is optional, handle
-                    // appropriately
-                    Log.e(TAG, "Sign-in failed.");
-                    finish();
-                    return;
-                }
 
-                Task<GoogleSignInAccount> getAccountTask =
-                        GoogleSignIn.getSignedInAccountFromIntent(data);
-                if (getAccountTask.isSuccessful()) {
-                    initializeDriveClient(getAccountTask.getResult());
-                } else {
-                    Log.e(TAG, "Sign-in failed.");
-                    finish();
-                }
-                break;
             case REQUEST_IMAGE_CAPTURE:
                 // If the image capture activity was called and was successful
                 if (resultCode == RESULT_OK) {
@@ -149,6 +135,15 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
 
                     // Otherwise, delete the temporary image file
                     BitmapUtils.deleteImageFile(this, mTempPhotoPath);
+                }
+                break;
+            case REQUEST_CODE_SIGN_IN:
+                if (resultCode == RESULT_OK) {
+                    initializeDriveClient(GoogleSignIn.getLastSignedInAccount(this));
+                } else if (resultCode == RESULT_CANCELED) {
+                    Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(this, "Failed", Toast.LENGTH_LONG).show();
                 }
                 break;
         }
@@ -164,9 +159,10 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
         onDriveClientReady();
     }
 
-    private void onDriveClientReady() {
+    protected void onDriveClientReady() {
         //listFiles();
     }
+
 
     /**
      * Starts the sign-in process and initializes the Drive client.
@@ -212,7 +208,8 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // If you get permission, launch the camera
-                    launchCamera();
+                    //launchCamera();
+
                 } else {
                     // If you do not get permission, show a Toast
                     Toast.makeText(this, R.string.permission_denied, Snackbar.LENGTH_LONG).show();
@@ -305,11 +302,16 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
     @Override
     protected void onStart() {
         super.onStart();
+
         if (PREFERENCES_HAVE_BEEN_UPDATED) {
 //            invalidateData();
 //            getSupportLoaderManager().restartLoader(MOVIE_QUERIES_LOADER_ID, null, this);
 
             PREFERENCES_HAVE_BEEN_UPDATED = false;
+        }
+
+        if (checkGoogleAppPref()) {
+            signIn();
         }
     }
 
@@ -339,13 +341,13 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
             PREFERENCES_HAVE_BEEN_UPDATED = true;
         }
 
-        if(displayCriteria.equals(getString(R.string.pref_display_crit_google_photos_storage_key))) {
-            signIn();
-        }
+//        if (checkGoogleAppPref()) {
+//            signIn();
+//        }
     }
 
-    private boolean checkGoogleApp() {
+    private boolean checkGoogleAppPref() {
         return displayCriteria.equals(getString(R.string.pref_display_crit_google_photos_storage_key));
-        }
     }
+
 }
