@@ -17,7 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -27,9 +27,22 @@ import com.example.roby.photoalbum.ui.PhotoEditActivity;
 import com.example.roby.photoalbum.ui.PhotoViewActivity;
 import com.example.roby.photoalbum.utils.BitmapUtils;
 import com.example.roby.photoalbum.utils.Constants;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveClient;
+import com.google.android.gms.drive.DriveId;
+import com.google.android.gms.drive.DriveResourceClient;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,13 +59,31 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
     private boolean mTwoPane;
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int REQUEST_STORAGE_PERMISSION = 1;
+    private static final int REQUEST_STORAGE_PERMISSION = 2;
+    private static final int REQUEST_CODE_SIGN_IN = 3;
     private String mTempPhotoPath;
     public static String displayCriteria;
 
     private static final String FILE_PROVIDER_AUTHORITY = "com.example.android.fileprovider";
 
     private static boolean PREFERENCES_HAVE_BEEN_UPDATED = false;
+
+    /**
+     * Handles high-level drive functions like sync
+     */
+    private DriveClient mDriveClient;
+
+    /**
+     * Handle access to Drive resources/files.
+     */
+    private DriveResourceClient mDriveResourceClient;
+
+    /**
+     * Tracks completion of the drive picker
+     */
+    private TaskCompletionSource<DriveId> mOpenItemTaskSource;
+    private static final String TAG = "MainActivityGDrive";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +103,8 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
 
         //preferences are used to switch the DISPLAY criteria
         setupSharedPreferences();
+
+
     }
 
     //this is used to change the pref of the sorting criteria
@@ -87,14 +120,72 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // If the image capture activity was called and was successful
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            // Process the image and set it to the TextView
-            processAndSetImage();
-        } else {
+        switch (requestCode) {
+            case REQUEST_CODE_SIGN_IN:
+                if (resultCode != RESULT_OK) {
+                    // Sign-in may fail or be cancelled by the user. For this sample, sign-in is
+                    // required and is fatal. For apps where sign-in is optional, handle
+                    // appropriately
+                    Log.e(TAG, "Sign-in failed.");
+                    finish();
+                    return;
+                }
 
-            // Otherwise, delete the temporary image file
-            BitmapUtils.deleteImageFile(this, mTempPhotoPath);
+                Task<GoogleSignInAccount> getAccountTask =
+                        GoogleSignIn.getSignedInAccountFromIntent(data);
+                if (getAccountTask.isSuccessful()) {
+                    initializeDriveClient(getAccountTask.getResult());
+                } else {
+                    Log.e(TAG, "Sign-in failed.");
+                    finish();
+                }
+                break;
+            case REQUEST_IMAGE_CAPTURE:
+                // If the image capture activity was called and was successful
+                if (resultCode == RESULT_OK) {
+                    // Process the image and set it to the TextView
+                    processAndSetImage();
+                } else {
+
+                    // Otherwise, delete the temporary image file
+                    BitmapUtils.deleteImageFile(this, mTempPhotoPath);
+                }
+                break;
+        }
+    }
+
+    /**
+     * Continues the sign-in process, initializing the Drive clients with the current
+     * user's account.
+     */
+    private void initializeDriveClient(GoogleSignInAccount signInAccount) {
+        mDriveClient = Drive.getDriveClient(getApplicationContext(), signInAccount);
+        mDriveResourceClient = Drive.getDriveResourceClient(getApplicationContext(), signInAccount);
+        onDriveClientReady();
+    }
+
+    private void onDriveClientReady() {
+        //listFiles();
+    }
+
+    /**
+     * Starts the sign-in process and initializes the Drive client.
+     */
+    protected void signIn() {
+        Set<Scope> requiredScopes = new HashSet<>(2);
+        requiredScopes.add(Drive.SCOPE_FILE);
+        requiredScopes.add(Drive.SCOPE_APPFOLDER);
+        GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(this);
+        if (signInAccount != null && signInAccount.getGrantedScopes().containsAll(requiredScopes)) {
+            initializeDriveClient(signInAccount);
+        } else {
+            GoogleSignInOptions signInOptions =
+                    new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                            .requestScopes(Drive.SCOPE_FILE)
+                            .requestScopes(Drive.SCOPE_APPFOLDER)
+                            .build();
+            GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, signInOptions);
+            startActivityForResult(googleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
         }
     }
 
@@ -246,6 +337,15 @@ public class MainActivity extends AppCompatActivity implements PhotoAlbumMasterL
 //                    getString(R.string.pref_sort_crit_top_rated_key)));
             displayCriteria = sharedPreferences.getString(getString(R.string.pref_display_crit), getString(R.string.pref_display_crit_int_storage_key));
             PREFERENCES_HAVE_BEEN_UPDATED = true;
+        }
+
+        if(displayCriteria.equals(getString(R.string.pref_display_crit_google_photos_storage_key))) {
+            signIn();
+        }
+    }
+
+    private boolean checkGoogleApp() {
+        return displayCriteria.equals(getString(R.string.pref_display_crit_google_photos_storage_key));
         }
     }
 }
